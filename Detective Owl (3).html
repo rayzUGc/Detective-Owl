@@ -1,0 +1,444 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Detective Owl</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#FFF6DC;--card:#FFFFFF;--ink:#23305A;--muted:#5D6890;--blue:#2F8CFF;--green:#1E9E58;--red:#E8402F;--sun:#FFC933;--line:#FFE3A1;--bubble:#E8F2FF;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#171C3A;--card:#232A52;--ink:#F5F1E3;--muted:#B4BBE0;--line:#3A4378;--bubble:#2C3566;--green:#4BD58A;--red:#FF7060;--blue:#6FB0FF}}
+:root[data-theme="dark"]{--bg:#171C3A;--card:#232A52;--ink:#F5F1E3;--muted:#B4BBE0;--line:#3A4378;--bubble:#2C3566;--green:#4BD58A;--red:#FF7060;--blue:#6FB0FF}
+:root[data-skin="ocean"]{--bg:#DFF3FF;--card:#fff;--line:#A8DBF5;--bubble:#E1F4FF;--blue:#0E7FD1;--sun:#7FE0D4;--ink:#0C3556;--muted:#3E6784;--green:#16895A;--red:#D93A2B}
+:root[data-skin="space"]{--bg:#0E1030;--card:#1B1F4A;--line:#3B3F8C;--bubble:#272C66;--ink:#F1EEFF;--muted:#B5B8E8;--blue:#8E7BFF;--sun:#FFD666;--green:#5BE3A0;--red:#FF7B8A}
+:root[data-skin="candy"]{--bg:#FFE6F2;--card:#fff;--line:#FFB8DA;--bubble:#FFEAF5;--blue:#D63D91;--sun:#FFE066;--ink:#5A1C44;--muted:#8C4A72;--green:#168A58;--red:#D93A2B}
+:root[data-skin="sunset"]{--bg:#FFE9D6;--card:#fff;--line:#FFC59A;--bubble:#FFF0E4;--blue:#E8590C;--sun:#FFD166;--ink:#4A1F0F;--muted:#85513A;--green:#1B8A4A;--red:#C92A2A}
+:root[data-skin="jungle"]{--bg:#E3F5D8;--card:#fff;--line:#A9D98F;--bubble:#EAF8DF;--blue:#2E8B3D;--sun:#FFD84D;--ink:#1F3D1C;--muted:#4A6B45;--green:#0E7A3A;--red:#D93A2B}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:'Baloo 2','Trebuchet MS','Comic Sans MS',system-ui,sans-serif;font-weight:500}
+body{min-height:100%;padding:16px}
+.app{max-width:700px;margin:0 auto}
+header{display:flex;align-items:center;gap:8px;margin-bottom:14px}
+h1{font-size:1.35rem;margin:0;font-weight:800;flex:1}
+h2{font-size:1.7rem;margin:6px 0;font-weight:800;line-height:1.15}
+h3{margin:14px 0 6px;font-size:1.2rem}
+.stars{background:var(--sun);color:#3a2a00;border-radius:999px;padding:2px 14px;font-weight:800;font-size:1.15rem;white-space:nowrap}
+.mute{font:inherit;font-size:1.3rem;background:var(--card);color:var(--ink);border:3px solid var(--line);border-radius:14px;padding:0 9px;cursor:pointer}
+.mute.off{opacity:.4}
+.card{background:var(--card);border-radius:24px;padding:22px;border:3px solid var(--line)}
+.card.out{animation:outp .26s ease-in forwards}
+.card.in{animation:inp .4s cubic-bezier(.2,1.3,.4,1)}
+@keyframes outp{to{transform:translateX(-70px) scale(.94);opacity:0}}
+@keyframes inp{from{transform:translateX(80px) scale(.94);opacity:0}}
+.badge{display:inline-block;background:var(--blue);color:#fff;border-radius:99px;padding:0 14px;font-weight:700}
+.ask{font-size:1.1rem;color:var(--muted);margin:0 0 12px}
+.sent{font-size:1.6rem;line-height:1.5;margin:12px 0;font-weight:700}
+.say{display:flex;gap:10px;align-items:flex-start;margin:8px 0 14px}
+.say .owl{font-size:2.2rem;line-height:1}
+.say p{margin:0;background:var(--bubble);border-radius:18px;padding:10px 16px;font-size:1.1rem;flex:1;min-height:50px}
+.row{display:flex;gap:10px;flex-wrap:wrap}
+.btn{font:inherit;font-weight:800;font-size:1.25rem;border:0;border-radius:18px;padding:9px 22px;cursor:pointer;background:var(--blue);color:#fff;box-shadow:0 5px 0 rgba(0,0,0,.2);touch-action:manipulation}
+.btn:active{transform:translateY(3px);box-shadow:0 2px 0 rgba(0,0,0,.2)}
+.btn.go{background:var(--green)}
+.btn.no{background:var(--red)}
+.btn.opt{background:var(--card);color:var(--ink);border:3px solid var(--blue);box-shadow:0 5px 0 var(--line)}
+.btn.opt.ok{background:var(--green);color:#fff;border-color:var(--green)}
+.btn:disabled{opacity:.4;cursor:default}
+.btn:focus-visible,input:focus-visible{outline:4px solid var(--blue);outline-offset:2px}
+.shake{animation:sh .35s}
+@keyframes sh{25%{transform:translateX(-7px)}75%{transform:translateX(7px)}}
+input{font:inherit;font-size:1.2rem;width:100%;padding:8px 14px;border-radius:14px;border:3px solid var(--line);background:var(--card);color:var(--ink);margin:4px 0 10px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px;margin:10px 0}
+.pc{background:var(--bubble);border-radius:20px;padding:14px;display:flex;flex-direction:column;gap:4px}
+.pc b{font-size:1.25rem}.pc small{color:var(--muted)}
+.pc .em{font-size:2rem}
+.mini{height:10px;background:var(--line);border-radius:9px;overflow:hidden}.mini i{display:block;height:100%;background:var(--green)}
+.dots{display:flex;gap:5px;margin:8px 0}.dots i{flex:1;height:9px;border-radius:9px;background:var(--line)}.dots i.d{background:var(--green)}.dots i.c{background:var(--blue)}
+.it{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:6px 0;border-bottom:2px dashed var(--line)}
+.it .btn{font-size:1rem;padding:5px 14px}
+.code{font-size:1.3rem;font-weight:800;word-break:break-all;background:var(--bubble);border-radius:14px;padding:10px 14px;margin:8px 0;user-select:all}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;padding:16px;z-index:20;overflow:auto}
+.modal .card{max-width:440px;width:100%}
+.hide{display:none}
+#splash{position:fixed;inset:0;z-index:60;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:24px;text-align:center;transition:opacity .4s}
+#splash.gone{opacity:0;pointer-events:none}
+#splash .big{font-size:5rem;line-height:1;animation:bob 1s ease-in-out infinite alternate}
+@keyframes bob{to{transform:translateY(-16px) rotate(6deg)}}
+.lbarw{width:min(320px,80vw);height:22px;background:var(--line);border-radius:99px;overflow:hidden}
+.lbarw i{display:block;height:100%;width:0;background:linear-gradient(90deg,#22C06A,#7AE582);transition:width .25s}
+.toast{position:fixed;left:50%;top:14%;background:#1E9E58;color:#fff;font-weight:800;font-size:1.4rem;padding:8px 26px;border-radius:99px;pointer-events:none;z-index:30;animation:toastp 1.6s forwards}
+@keyframes toastp{0%{transform:translate(-50%,20px) scale(.5);opacity:0}15%{transform:translate(-50%,0) scale(1.1);opacity:1}80%{transform:translate(-50%,0);opacity:1}100%{transform:translate(-50%,-30px);opacity:0}}
+.star{position:absolute;font-size:2.2rem;background:none;border:0;cursor:pointer;padding:0}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="app">
+  <header><h1 id="ttl">🦉 Detective Owl</h1><div class="stars" id="stars">⭐ 0</div><button class="mute" id="mus" aria-label="Turn music off">🎵</button><button class="mute" id="mute" aria-label="Turn sound off">🔊</button><button class="mute" id="shp" aria-label="Shop">🛍️</button><button class="mute" id="menu" aria-label="Menu">☰</button></header>
+  <main class="card" id="stage"></main>
+</div>
+<div class="modal hide" id="modal"></div>
+<div id="splash"><div class="big">🦉</div><h1 style="flex:none;font-size:2rem">Detective Owl</h1><div class="lbarw"><i id="lbar"></i></div><p class="ask" id="ltip" role="status" style="min-height:1.5em;margin:0">Loading…</p><button class="btn go hide" id="lgo">Tap to start</button></div>
+<script>
+const $=id=>document.getElementById(id);
+const pick=a=>a[Math.random()*a.length|0];
+const shuf=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]];}return a;};
+const cap=s=>s[0].toUpperCase()+s.slice(1);
+const dis=(c,pool,n=2)=>shuf(pool.filter(x=>x!==c)).slice(0,n);
+const esc=s=>s.replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const Q=(t,a,d,w)=>({t,a,o:shuf([a,...d]),w});
+
+/* ---------- question banks (made fresh every round) ---------- */
+const N=["mango","teacher","river","dog","school","market","sister","garden","doctor","basket"],AB=["joy","freedom","friendship","honesty","courage","kindness"],V=["jump","sing","carry","laugh","swim","dance"],AJ=["tall","shiny","brave","quiet","sweet","funny"],N2=["dog","tree","bag","house","bird","box"];
+const PL=[["cat","cats"],["box","boxes"],["baby","babies"],["child","children"],["leaf","leaves"],["man","men"],["tooth","teeth"],["bus","buses"],["foot","feet"],["dish","dishes"]];
+const SV=[["I","am"],["He","is"],["She","is"],["We","are"],["They","are"],["The girls","are"],["The boy","is"],["You","are"]];
+const VP=[["walk","walked"],["play","played"],["go","went"],["eat","ate"],["see","saw"],["run","ran"],["swim","swam"],["sing","sang"],["jump","jumped"],["give","gave"]];
+const TS=["Yesterday","Last night","Last week","Long ago"],SU=["I","we","they","she","he"];
+const V3=[["run","runs"],["jump","jumps"],["eat","eats"],["sleep","sleeps"],["sing","sings"]];
+const CP=[["tall","taller","tallest"],["big","bigger","biggest"],["small","smaller","smallest"],["fast","faster","fastest"],["happy","happier","happiest"],["long","longer","longest"]];
+const PR=[["Maria","she"],["Tom","he"],["The dog","it"],["Maria and Tom","they"],["My sister","she"],["My father","he"]],OBJ={she:"her",he:"him",it:"it",they:"them"},POS_={she:"her",he:"his",it:"its",they:"their"};
+const TM=[["I was born ___ July.","in"],["School starts ___ Monday.","on"],["We eat dinner ___ 6 o’clock.","at"],["It rains ___ the afternoon.","in"],["The party is ___ Friday.","on"],["The bus leaves ___ noon.","at"]];
+const PP=[["The fish swims ___ the water.","in"],["The book is ___ the table.","on"],["We wait ___ the bus stop.","at"],["The keys are ___ my bag.","in"],["The picture is ___ the wall.","on"],["She stands ___ the door.","at"]];
+const DR=[["She walked ___ the bridge.","across"],["He jumped ___ the pool.","into"],["The ball rolled ___ the hill.","down"],["The cat climbed ___ the tree.","up"],["We drove ___ the tunnel.","through"],["The bird flew ___ the house.","over"]];
+const G=[
+ [()=>{const n=pick(N),v=pick(V),a=pick(AJ);return Q("Which word is a noun?",n,[v,a],`${cap(n)} is a noun. ${cap(v)} is an action word and ${a} describes things.`)},
+  ()=>{const[s,p]=pick(PL);return Q(`One ${s}, many ___.`,p,dis(p,[s+"s",s+"es",s+"ies",s+"ren"]),`The plural of ${s} is ${p}.`)},
+  ()=>{const n=pick(AB),v=pick(V),a=pick(AJ);return Q("Which noun names an idea or a feeling?",n,[v,a],`${cap(n)} is an idea you can’t touch, but it is still a noun.`)}],
+ [()=>{const[s,v]=pick(SV);return Q(`${s} ___ happy today.`,v,dis(v,["am","is","are"]),`${s} goes with ${v}.`)},
+  ()=>{const[b,p]=pick(VP),s=pick(SU),t=pick(TS);return Q(`${t}, ${s} ___ (${b}).`,p,[b,"will "+b],`${t} means it already happened, so we say ${p}.`)},
+  ()=>{const[b,z]=pick(V3),sg=Math.random()<.5,s=sg?pick(["The dog","My sister","The bird"]):pick(["The dogs","My sisters","The birds"]),a=sg?z:b;return Q(`${s} ___ every day.`,a,dis(a,[b,z,b+"ing"]),sg?`One person or animal: add s, so ${z}.`:`More than one: no s, so ${b}.`)}],
+ [()=>{const a=pick(AJ),n=pick(N2);return Q(`Which word describes the noun in “The ${a} ${n}”?`,a,["The",n],`${cap(a)} tells us what the ${n} is like.`)},
+  ()=>{const[b,c,s]=pick(CP);return Q(`This ${pick(N2)} is ___ than that one.`,c,dis(c,[b,s,"more "+b]),`Comparing two things: add er, so ${c}.`)},
+  ()=>{const[b,c,s]=pick(CP);return Q(`That is the ___ ${pick(N2)} in the world!`,s,dis(s,[b,c,"most "+b]),`The most of all: add est, so ${s}.`)}],
+ [()=>{const[n,p]=pick(PR);return Q(`${n} is kind. ___ helps everyone.`,cap(p),dis(p,["he","she","it","they","we"]).map(cap),`We use “${p}” to talk about ${n}.`)},
+  ()=>{const[n,p]=pick(PR),o=OBJ[p];return Q(`We saw ${n} at the shop. We waved at ___.`,o,dis(o,[p,"us","hers","me"]),`After a word like “at” we use ${o}.`)},
+  ()=>{const[n,p]=pick(PR),o=POS_[p];return Q(`The bag belongs to ${n}. It is ___ bag.`,o,dis(o,["he","she","hers","them","him"]),`Belonging to ${n}: ${o}.`)}],
+ [()=>{const[t,a]=pick(TM);return Q(t,a,dis(a,["in","on","at"]),`Times and dates: in (months), on (days), at (clock times).`)},
+  ()=>{const[t,a]=pick(PP);return Q(t,a,dis(a,["in","on","at"]),`The word “${a}” fits this place best.`)},
+  ()=>{const[t,a]=pick(DR);return Q(t,a,dis(a,["with","of","about","for"]),`“${cap(a)}” shows the way something moves.`)}]
+];
+const POS=[{k:"Nouns",e:"🍎"},{k:"Verbs",e:"🏃"},{k:"Adjectives",e:"🌈"},{k:"Pronouns",e:"👤"},{k:"Prepositions",e:"📍"}];
+const LT=["Rookie","Sleuth","Sharp Eye","Inspector","Detective","Chief","Ace","Master","Legend","Grand Owl"];
+
+/* ---------- shop items ---------- */
+const SK=[{n:"Sunny",c:0,id:"sunny"},{n:"Ocean",c:30,id:"ocean"},{n:"Space",c:60,id:"space"},{n:"Candy",c:90,id:"candy"}];
+const MUS=[{n:"Bouncy",c:0,d:.2143,p:"C,Am,F,G",ty:"square",k:1},{n:"Chill",c:40,d:.3,p:"Am,F,C,G",ty:"sine",k:0},{n:"Rock",c:70,d:.17,p:"C,G,Am,F",ty:"sawtooth",k:1}];
+const HAT=[{n:"No hat",e:"",c:0},{n:"Top hat",e:"🎩",c:20},{n:"Detective",e:"🕵️",c:25},{n:"Grad cap",e:"🎓",c:35},{n:"Crown",e:"👑",c:50}];
+const ITEMS=[...SK.map((x,i)=>({g:"sk",i,b:i,n:x.n+" theme",c:x.c})),...MUS.map((x,i)=>({g:"mu",i,b:4+i,n:x.n+" music",c:x.c})),...HAT.map((x,i)=>({g:"ht",i,b:7+i,n:x.n+" "+x.e,c:x.c})),{g:"gm",i:0,b:12,n:"Game: Star Pop 🌟",c:100}];
+
+/* ---------- state, save codes ---------- */
+const fresh=name=>({name,r:[0,0,0,0,0],stars:0,mask:145,sk:0,mu:0,ht:0,mk:"",mx:0});
+let S=null,scr="name",P=0,qs=[],qi=0,good=0,missed=false,locked=false,gameT=null;
+const own=b=>(S.mask>>b)&1;
+const lv=p=>Math.floor(S.r[p]/2)+1;
+const save=()=>{try{localStorage.setItem("owl",JSON.stringify(S));}catch(e){}};
+const chk=(name,p)=>{let h=7;for(const c of name.trim().toLowerCase()+"|"+p)h=(h*31+c.charCodeAt(0))%46656;return h.toString(36).toUpperCase().padStart(3,"0");};
+const mkCode=()=>{const p=[...S.r,S.stars,S.mask,S.sk*100+S.mu*10+S.ht].map(n=>n.toString(36)).join("-").toUpperCase();return p+"-"+chk(S.name,p);};
+function readCode(name,code){const a=code.trim().toUpperCase().split("-");if(a.length!==9)return null;const c=a.pop(),p=a.join("-");if(chk(name,p)!==c)return null;const n=a.map(x=>parseInt(x,36));if(n.some(isNaN))return null;const e=n[7];return{name:name.trim(),r:n.slice(0,5),stars:n[5],mask:n[6],sk:Math.floor(e/100),mu:Math.floor(e/10)%10,ht:e%10};}
+
+/* ---------- sound + music ---------- */
+let AC=null,muted=false,musicOn=true,mt=null,mg=null,hold=false,ms=0,nextT=0;
+function tone(f,t,d,ty,v,f2){const o=AC.createOscillator(),g=AC.createGain();o.type=ty||"sine";o.frequency.setValueAtTime(f,t);if(f2)o.frequency.exponentialRampToValueAtTime(f2,t+d);g.gain.setValueAtTime(v||.15,t);g.gain.exponentialRampToValueAtTime(.001,t+d);o.connect(g);g.connect(AC.destination);o.start(t);o.stop(t+d+.02);}
+function sfx(k){if(muted)return;try{if(!AC)AC=new(window.AudioContext||window.webkitAudioContext)();if(AC.state==="suspended")AC.resume();startMusic();const n=AC.currentTime;
+ if(k==="tap")tone(660,n,.06,"triangle",.12);
+ else if(k==="good")[523,659,784].forEach((f,j)=>tone(f,n+j*.09,.18,"sine",.18));
+ else if(k==="bad")tone(240,n,.25,"sawtooth",.08,140);
+ else if(k==="whoosh")tone(300,n,.22,"sine",.1,1000);
+ else if(k==="win")[523,523,659,784,659,784,1047].forEach((f,j)=>tone(f,n+j*.13,.3,"triangle",.2));
+}catch(e){}}
+const CH={C:[131,[523,659,784,659]],Am:[110,[440,523,659,523]],F:[87,[349,440,523,440]],G:[98,[392,494,587,494]]};
+function mn(f,t,d,ty,v,f2){if(!mg)return;const o=AC.createOscillator(),g=AC.createGain();o.type=ty;o.frequency.setValueAtTime(f,t);if(f2)o.frequency.exponentialRampToValueAtTime(f2,t+d);g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(.001,t+d);o.connect(g);g.connect(mg);o.start(t);o.stop(t+d+.02);}
+function mnote(i,t){const m=MUS[S?S.mu:0],c=CH[m.p.split(",")[i>>3]],k=i%8;mn(k%4===2?c[0]*2:c[0],t,.2,"triangle",.22);mn(c[1][k%4],t,.16,m.ty,m.ty==="sine"?.06:.035);if(m.k){if(k%2===0)mn(120,t,.12,"sine",.3,45);else mn(7000,t,.03,"square",.012);}}
+function sched(){if(!AC||!mg)return;const d=MUS[S?S.mu:0].d;if(nextT<AC.currentTime-.3)nextT=AC.currentTime;while(nextT<AC.currentTime+.3){mnote(ms,nextT);nextT+=d;ms=(ms+1)%32;}}
+function startMusic(){if(muted||!musicOn||hold||mt||!AC)return;mg=AC.createGain();mg.gain.value=.5;mg.connect(AC.destination);ms=0;nextT=AC.currentTime+.05;mt=setInterval(sched,100);}
+function stopMusic(){if(mt){clearInterval(mt);mt=null;}if(mg){try{mg.gain.setTargetAtTime(0,AC.currentTime,.05);}catch(e){}mg=null;}}
+$("mute").onclick=function(){muted=!muted;this.textContent=muted?"🔇":"🔊";this.setAttribute("aria-label",muted?"Turn sound on":"Turn sound off");if(muted)stopMusic();else sfx("tap");};
+$("mus").onclick=function(){musicOn=!musicOn;this.classList.toggle("off",!musicOn);this.setAttribute("aria-label",musicOn?"Turn music off":"Turn music on");if(musicOn)sfx("tap");else stopMusic();};
+document.addEventListener("visibilitychange",()=>{if(document.hidden)stopMusic();else startMusic();});
+
+/* ---------- ui helpers ---------- */
+const stage=$("stage");
+function refresh(){$("stars").textContent="⭐ "+(S?S.stars:0);$("ttl").textContent=(S?HAT[S.ht].e:"")+"🦉 Detective Owl";document.documentElement.dataset.skin=S?SK[S.sk].id:"sunny";}
+function toast(t){const d=document.createElement("div");d.className="toast";d.textContent=t;document.body.appendChild(d);setTimeout(()=>d.remove(),1700);}
+function go(fn){stage.className="card out";sfx("whoosh");setTimeout(()=>{fn();refresh();stage.className="card in";},260);}
+function shake(el){sfx("bad");el.classList.remove("shake");void el.offsetWidth;el.classList.add("shake");}
+function say(t){$("msg").textContent=t;}
+function modal(html){const m=$("modal");m.innerHTML='<div class="card" role="dialog" aria-modal="true">'+html+'</div>';m.classList.remove("hide");const b=m.querySelector("button");if(b)b.focus();}
+function closeModal(){$("modal").classList.add("hide");}
+function on(id,fn){$(id).onclick=()=>{sfx("tap");fn();};}
+function copy(t){try{navigator.clipboard.writeText(t);toast("Copied!");}catch(e){toast("Select and copy it");}}
+
+/* ---------- screens ---------- */
+function nameScreen(){
+  scr="name";let saved=null;try{saved=JSON.parse(localStorage.getItem("owl"));}catch(e){}
+  stage.innerHTML=`<h2>🦉 Detective Owl</h2><p class="ask">Solve grammar cases, win stars and unlock cool stuff!</p>
+  <label for="nm"><b>Your name</b></label><input id="nm" maxlength="16" autocomplete="off" placeholder="Type your name">
+  <div class="row"><button class="btn go" id="start">New game</button>${saved&&saved.name?`<button class="btn" id="cont">Continue as ${esc(saved.name)}</button>`:""}</div>
+  <h3>Have a code?</h3><input id="cd" autocomplete="off" placeholder="Paste your code (your name must match)"><button class="btn opt" id="load">Load my game</button>
+  <div class="say"><span class="owl">🦉</span><p id="msg">Hi! What’s your name, detective?</p></div><div class="row"><button class="btn opt" id="tch" style="font-size:1rem;padding:4px 14px">👩‍🏫 Teacher</button></div>`;
+  on("start",()=>{const n=$("nm").value.trim();if(!n){say("Please type your name first!");return;}S=fresh(n);save();go(home);});
+  if(saved&&saved.name)on("cont",()=>{S=Object.assign(fresh(saved.name),saved);go(home);});
+  on("tch",()=>go(TEACH?teacher:teacherLogin));on("load",()=>{const n=$("nm").value.trim();if(!n){say("Type your name first, then your code.");return;}const r=readCode(n,$("cd").value);if(!r){shake($("cd"));say("That code doesn’t match this name. Check both and try again.");return;}S=r;save();go(home);});
+}
+function home(){
+  scr="home";daily();rollMonth();
+  stage.innerHTML=`<h2>${HAT[S.ht].e}🦉 Hi, ${esc(S.name)}!</h2><p class="ask">Pick a part of speech. Every round has 10 new questions. This month: ${S.mx} XP.${streak()}</p><div class="grid">`+
+  POS.map((p,i)=>`<div class="pc"><span class="em">${p.e}</span><b>${p.k}</b><small>Level ${lv(i)}: ${LT[Math.min(lv(i)-1,9)]}</small><small>${CN[i].toLocaleString()} questions</small><div class="mini"><i style="width:${S.r[i]%2*50}%"></i></div><button class="btn go" data-p="${i}">Round ${S.r[i]+1}</button></div>`).join("")+
+  `</div><div id="asg"></div>${badges()}<div class="row"><button class="btn go" id="dq">🎯 Daily challenge</button><button class="btn" id="wq">🏅 Weekly challenge</button>${jget("owlmiss",[]).length?`<button class="btn" id="nb">📓 Mistakes (${jget("owlmiss",[]).length})</button>`:""}<button class="btn" id="shop">⭐ Shop</button><button class="btn opt" id="lb">🏆 Leaderboard</button><button class="btn opt" id="ct">📜 Certificate</button><button class="btn opt" id="sv">💾 Save code</button></div>`;
+  stage.querySelectorAll("[data-p]").forEach(b=>b.onclick=()=>{sfx("tap");P=+b.dataset.p;go(startRound);});
+  showAsg();on("shop",()=>go(shop));on("dq",()=>jget("owlchal:"+S.name.toLowerCase(),"")===day()?toast("Daily challenge done! Come back tomorrow."):go(dailyStart));on("wq",()=>jget("owlweek:"+S.name.toLowerCase(),"")===wkk()?toast("Weekly challenge done! A new one starts Monday."):go(weeklyStart));if($("nb"))on("nb",()=>go(notebookStart));on("lb",()=>go(board));on("ct",certificate);on("sv",showCode);
+}
+function startRound(){
+  scr="round";MODE=0;const gens=dfv()===0?G[P].slice(0,1).concat(C[P][0]):dfv()===2?G[P].concat(X[P],C[P],C2[P]):(lv(P)>=4?G[P].concat(X[P]):G[P].slice(0,Math.min(3,lv(P)))).concat(C[P],C2[P]),seen={};qs=[];
+  for(let n=0;qs.length<rlv()&&n<200;n++){const q=pick(gens)(),k=q.t+q.a;if(!seen[k]||n>60){seen[k]=1;qs.push(q);}}
+  qi=0;good=0;showQ();
+}
+function showQ(){
+  const q=qs[qi];curQ=q;if(S.ra)setTimeout(()=>speak(q),300);missed=false;locked=false;
+  stage.innerHTML=`<span class="badge">${MODE?(MODE===1?"🎯 Daily challenge":MODE===3?"🏅 Weekly challenge":"📓 Mistake notebook"):POS[P].e+" "+POS[P].k+" · Level "+lv(P)}</span><div class="dots">${qs.map((_,i)=>`<i class="${i<qi?"d":i===qi?"c":""}"></i>`).join("")}</div><div class="sent">${esc(q.t)}</div><button class="btn opt" id="rd" style="font-size:1rem;padding:4px 14px;margin-bottom:10px">🔊 Read to me</button><div class="row" id="opts"></div><div class="say"><span class="owl">🦉</span><p id="msg">Pick the best answer!</p></div><div class="row" id="acts"></div>`;
+  q.o.forEach(o=>{const b=document.createElement("button");b.className="btn opt";b.textContent=o;b.onclick=()=>{if(locked)return;sfx("tap");
+    if(o===q.a){locked=true;b.classList.add("ok");if(!missed){good++;if(MODE===2)clearMiss(q);}sfx("good");say("Yes! "+q.w);if(S.ra)speakText("Correct. "+q.w);const n=document.createElement("button");n.className="btn go";n.textContent=qi>=qs.length-1?"Finish round":"Next";n.onclick=()=>{sfx("tap");qi++;qi>=qs.length?go(MODE===1?dailyDone:MODE===2?notebookDone:MODE===3?weeklyDone:result):go(showQ);};$("acts").appendChild(n);n.focus();}
+    else{if(!missed&&MODE!==2)logMiss(q);missed=true;b.disabled=true;shake(b);say("Not that one. Try another!");}};$("opts").appendChild(b);});
+}
+function result(){
+  scr="result";const old=lv(P),bonus=good===qs.length?3:0,ab=ASG&&ASG.p===P?2:0,earn=good+bonus+ab;S.stars+=earn;S.r[P]++;record(earn);save();
+  hold=true;stopMusic();sfx("win");if(good===qs.length||lv(P)>old)confetti();const up=lv(P)>old,code=mkCode();
+  stage.innerHTML=`<h2>${good===qs.length?"Perfect round! 🏆":"Round complete! 🎉"}</h2><p class="ask">${good} of ${qs.length} right the first time. You earned ${earn*10} XP and ⭐ ${earn}${bonus?" (includes a +3 perfect bonus)":""}${ab?" (+2 for your teacher’s topic)":""}.</p>${up?`<p class="badge">⬆️ ${POS[P].k} Level ${lv(P)}: ${LT[Math.min(lv(P)-1,9)]}!</p>`:""}
+  <p class="ask">Your code for this spot in the game (with your name, it brings you back here):</p><div class="code">${code}</div>
+  <div class="row"><button class="btn go" id="nr">Next round</button><button class="btn opt" id="cp">Copy code</button><button class="btn opt" id="hm">Home</button></div>`;
+  refresh();on("nr",()=>{hold=false;go(startRound);});on("cp",()=>copy(code));on("hm",()=>{hold=false;go(home);});
+}
+function shop(){
+  scr="shop";let h=`<h2>⭐ Shop</h2><p class="ask">You have ⭐ ${S.stars}. Earn stars by answering questions!</p><div style="font-size:3rem;text-align:center">${HAT[S.ht].e}🦉</div>`;
+  const sec={sk:"Themes",mu:"Music",ht:"Owl hats",gm:"Games"};let last="";
+  ITEMS.map((_,k)=>k).sort((a,b)=>"sk mu ht gm".indexOf(ITEMS[a].g)-"sk mu ht gm".indexOf(ITEMS[b].g)||a-b).forEach(k=>{const it=ITEMS[k];if(it.g!==last){h+=`<h3>${sec[it.g]}</h3>`;last=it.g;}
+    const o=own(it.b),eq=it.g!=="gm"&&S[it.g]===it.i;
+    h+=`<div class="it"><span>${own(it.b)?"":"🔒 "}${it.g==="sk"?SWT[SK[it.i].id]+" ":""}${it.n}</span><button class="btn ${o?"go":""}" data-k="${k}" ${eq||(!o&&S.stars<it.c)?"disabled":""}>${o?(it.g==="gm"?"Play":eq?"In use":"Use"):"Buy ⭐ "+it.c}</button></div>`;});
+  stage.innerHTML=h+`<div class="row" style="margin-top:14px"><button class="btn opt" id="bk">Back</button></div>`;
+  stage.querySelectorAll("[data-k]").forEach(b=>b.onclick=()=>{const it=ITEMS[+b.dataset.k];sfx("tap");
+    if(!own(it.b)){S.stars-=it.c;S.mask|=1<<it.b;toast("Unlocked!");sfx("good");}
+    if(it.g==="gm"){save();go([game,wordSort,lightning][it.i]);return;}
+    S[it.g]=it.i;if(it.g==="mu"){stopMusic();startMusic();}save();refresh();shop();});
+  on("bk",()=>go(home));
+}
+function game(){
+  scr="game";let sc=0,t=15;
+  stage.innerHTML=`<h2>🌟 Star Pop</h2><p class="ask">Pop as many stars as you can! Score <b id="sc">0</b> · Time <b id="tm">15</b></p><div id="arena" style="position:relative;height:280px;background:var(--bubble);border-radius:18px;overflow:hidden"></div><div class="row" style="margin-top:12px"><button class="btn opt" id="bk">Back</button></div>`;
+  on("bk",()=>{clearInterval(gameT);go(shop);});
+  clearInterval(gameT);let n=0;
+  gameT=setInterval(()=>{n++;if(n%2===0){t--;$("tm").textContent=t;}
+    if(t<=0){clearInterval(gameT);$("arena").innerHTML=`<h2 style="text-align:center;margin-top:90px">You popped ${sc} stars! 🎉</h2>`;sfx("win");return;}
+    const b=document.createElement("button");b.className="star";b.textContent="⭐";b.setAttribute("aria-label","Pop star");b.style.left=Math.random()*85+"%";b.style.top=Math.random()*80+"%";
+    b.onclick=()=>{sc++;$("sc").textContent=sc;sfx("good");b.remove();};$("arena").appendChild(b);setTimeout(()=>b.remove(),1200);},500);
+}
+
+SK.push({n:"Jungle",c:120,id:"jungle"});HAT.push({n:"Wizard",e:"🧙",c:60});
+ITEMS.push({g:"sk",i:4,b:13,n:"Jungle theme",c:120},{g:"ht",i:5,b:14,n:"Wizard hat 🧙",c:60},{g:"gm",i:1,b:15,n:"Game: Word Sort 🧩",c:150});
+function wordSort(){
+  scr="game";let i=0,sc=0;const C=[["Noun",N.concat(AB)],["Verb",V.concat(["run","eat","read","write"])],["Adjective",AJ.concat(["red","soft","loud"])]];
+  const next=()=>{if(scr!=="game")return;
+    if(i>=12){stage.innerHTML=`<h2>🧩 Word Sort</h2><p class="ask">You sorted ${sc} of 12 right! 🎉</p><div class="row"><button class="btn go" id="ag">Play again</button><button class="btn opt" id="bk">Back</button></div>`;sfx("win");on("ag",()=>go(wordSort));on("bk",()=>go(shop));return;}
+    const c=pick(C),word=pick(c[1]);let L=0;
+    stage.innerHTML=`<h2>🧩 Word Sort</h2><p class="ask">Word ${i+1} of 12: what kind of word is it?</p><div class="sent" style="text-align:center;font-size:2.4rem">${word}</div><div class="row">${C.map(x=>`<button class="btn opt" data-c="${x[0]}">${x[0]}</button>`).join("")}</div><div class="say"><span class="owl">🦉</span><p id="msg">Think carefully!</p></div>`;
+    stage.querySelectorAll("[data-c]").forEach(b=>b.onclick=()=>{if(L)return;L=1;const ok=b.dataset.c===c[0];sfx(ok?"good":"bad");if(ok)sc++;say(ok?"Correct!":`It’s a ${c[0].toLowerCase()}.`);i++;setTimeout(next,900);});};
+  next();
+}
+ITEMS.push({g:"gm",i:2,b:16,n:"Game: Lightning Round ⚡",c:200});
+function daily(){try{const k="owlday:"+S.name.toLowerCase(),d=new Date().toDateString();if(localStorage.getItem(k)!==d){localStorage.setItem(k,d);let st=null;try{st=JSON.parse(localStorage.getItem(k+"s"));}catch(e){}const y=new Date(Date.now()-864e5).toDateString(),n=st&&st.d===y?st.n+1:1;localStorage.setItem(k+"s",JSON.stringify({d,n}));const b=2+Math.min(n-1,5);S.stars+=b;save();setTimeout(()=>{toast((n>1?n+"-day streak! ":"")+"Daily bonus: +"+b+" ⭐");sfx("good");},400);}}catch(e){}}
+function lightning(){
+  scr="game";let sc=0,t=30;clearInterval(gameT);
+  stage.innerHTML=`<h2>⚡ Lightning Round</h2><p class="ask">Answer fast! Wrong answers just skip ahead. Score <b id="sc">0</b> · Time <b id="tm">30</b></p><div id="lq"></div><div class="row" style="margin-top:12px"><button class="btn opt" id="bk">Back</button></div>`;
+  on("bk",()=>{clearInterval(gameT);go(shop);});
+  const nq=()=>{const q=pick(G[Math.random()*5|0].slice(0,2))();$("lq").innerHTML=`<div class="sent">${esc(q.t)}</div><div class="row" id="lo"></div>`;q.o.forEach(o=>{const b=document.createElement("button");b.className="btn opt";b.textContent=o;b.onclick=()=>{if(t<=0)return;if(o===q.a){sc++;$("sc").textContent=sc;sfx("good");}else sfx("bad");nq();};$("lo").appendChild(b);});};
+  nq();
+  gameT=setInterval(()=>{if(scr!=="game"){clearInterval(gameT);return;}t--;$("tm").textContent=t;if(t<=0){clearInterval(gameT);$("lq").innerHTML=`<h2>You scored ${sc}! ⚡</h2><div class="row"><button class="btn go" id="ag">Play again</button></div>`;sfx("win");on("ag",()=>go(lightning));}},1000);
+}
+SK.push({n:"Sunset",c:150,id:"sunset"});MUS.push({n:"Disco",c:90,d:.18,p:"F,G,C,Am",ty:"triangle",k:1});HAT.push({n:"Pirate",e:"🏴‍☠️",c:70},{n:"Party",e:"🥳",c:40},{n:"Cowboy",e:"🤠",c:55});
+ITEMS.push({g:"sk",i:5,b:17,n:"Sunset theme",c:150},{g:"mu",i:3,b:18,n:"Disco music",c:90},{g:"ht",i:6,b:19,n:"Pirate hat 🏴‍☠️",c:70},{g:"ht",i:7,b:20,n:"Party hat 🥳",c:40},{g:"ht",i:8,b:21,n:"Cowboy hat 🤠",c:55});
+const OPP=[["hot","cold"],["big","small"],["happy","sad"],["fast","slow"],["old","new"],["tall","short"]],RF=[["I","myself"],["She","herself"],["He","himself"],["We","ourselves"],["They","themselves"]];
+const X=[
+ [()=>{const[w,a]=pick([["apple","an"],["egg","an"],["orange","an"],["umbrella","an"],["hour","an"],["dog","a"],["book","a"],["tiger","a"],["university","a"]]);return Q(`I saw ___ ${w}.`,a,dis(a,["a","an","many"]).concat("two").slice(0,2),`Say “an” before a vowel sound and “a” before other sounds, so ${a} ${w}.`)}],
+ [()=>{const[s,d]=pick([["I","don’t"],["She","doesn’t"],["They","don’t"],["He","doesn’t"],["We","don’t"],["The cat","doesn’t"]]);return Q(`${s} ___ like spicy food.`,d,dis(d,["don’t","doesn’t","isn’t"]),`${s} goes with ${d}.`)}],
+ [()=>{const[a,b]=pick(OPP),f=OPP.flat();return Q(`The opposite of “${a}” is ___.`,b,shuf(f.filter(x=>x!==a&&x!==b)).slice(0,2),`${cap(a)} and ${b} mean the opposite of each other.`)}],
+ [()=>{const[s,r]=pick(RF);return Q(`${s} looked at ___ in the mirror.`,r,dis(r,RF.map(x=>x[1])),`${s} goes with ${r}.`)}],
+ [()=>{const[t,a]=pick([["The ball is ___ the box, not outside it.","inside"],["This gift is ___ you.","for"],["Tea is made ___ water and a tea bag.","with"],["We talked ___ the movie for an hour.","about"]]);return Q(t,a,dis(a,["like","into","under"]),`The word “${a}” fits best here.`)}]
+];
+function badges(){const t=S.r.reduce((a,b)=>a+b,0),L=S.r.map((_,i)=>lv(i)),n=ITEMS.filter(i=>own(i.b)).length;const B=[[t>=1,"🎯","First round"],[t>=10,"🔥","10 rounds"],[t>=30,"💎","30 rounds"],[Math.max(...L)>=5,"🧠","Level 5"],[Math.min(...L)>=3,"🌟","All-rounder"],[n>=10,"🛍️","Collector"],[S.stars>=100,"💰","100 stars"]].filter(b=>b[0]);return `<p class="ask"><b>Badges:</b> ${B.length?B.map(b=>`<span style="margin-right:10px;white-space:nowrap">${b[1]} ${b[2]}</span>`).join(""):"play rounds to earn badges!"}</p>`;}
+function confetti(){if(matchMedia("(prefers-reduced-motion:reduce)").matches)return;for(let i=0;i<26;i++){const s=document.createElement("span");s.textContent=pick(["🎉","⭐","✨","🎊"]);s.style.cssText=`position:fixed;top:-30px;left:${Math.random()*100}%;font-size:${20+Math.random()*20}px;z-index:40;pointer-events:none;transition:transform ${2+Math.random()*1.5}s ease-in,opacity 2.8s;`;document.body.appendChild(s);requestAnimationFrame(()=>requestAnimationFrame(()=>{s.style.transform=`translateY(${innerHeight+60}px) rotate(${Math.random()*720}deg)`;s.style.opacity=0;}));setTimeout(()=>s.remove(),4000);}}
+/* ---------- big question banks (thousands of combinations per part of speech) ---------- */
+const NB=["girl","dog","teacher","bird","farmer","baby","cat","doctor","boy","monkey","sailor","nurse","rabbit","fox","king","pilot","chef","horse","duck","singer"],
+AD=["tall","shiny","brave","quiet","sweet","funny","tiny","loud","happy","sleepy","clever","gentle","rusty","fuzzy","golden","hungry","proud","kind","sunny","rainy"],
+VD=["ran","jumped","slept","sang","danced","laughed","waited","smiled","swam","walked","cried","played","worked","hopped","waved","rested","talked","sat","stood","yawned"];
+const VP2=[["walk","walked"],["play","played"],["go","went"],["eat","ate"],["see","saw"],["run","ran"],["swim","swam"],["sing","sang"],["jump","jumped"],["give","gave"],["write","wrote"],["take","took"],["make","made"],["draw","drew"],["drink","drank"],["sleep","slept"],["sit","sat"],["stand","stood"],["ride","rode"],["fly","flew"],["bring","brought"],["buy","bought"],["find","found"],["help","helped"],["cook","cooked"],["paint","painted"],["clean","cleaned"],["wash","washed"],["dance","danced"],["build","built"]];
+const TP=["Yesterday","Last night","Last week","Long ago","Last year","Last Monday","Two days ago","Last summer","Last weekend","A week ago"],TF=["Tomorrow","Next week","Next year","Soon","Next Monday","Next summer","Tonight","In two days","Next weekend","One day"];
+const SJ=["I","we","they","she","he","the dog","my mother","the boys","Maria","our teacher"],SG2=["The dog","My sister","The bird","Our teacher","The baby","My uncle","Maria"],PL3=["The dogs","My sisters","The birds","Our teachers","The babies","My uncles","The children"];
+const V4=["run","jump","eat","sleep","sing","play","walk","swim","laugh","work","dance","read"],WH=["every day","every morning","at school","in the park","after lunch","on Saturdays","at night","with friends","in the garden","at home"];
+const CP2=[["tall","taller","tallest"],["big","bigger","biggest"],["small","smaller","smallest"],["fast","faster","fastest"],["happy","happier","happiest"],["long","longer","longest"],["short","shorter","shortest"],["old","older","oldest"],["young","younger","youngest"],["slow","slower","slowest"],["heavy","heavier","heaviest"],["light","lighter","lightest"],["loud","louder","loudest"],["quiet","quieter","quietest"],["cold","colder","coldest"],["hot","hotter","hottest"],["cheap","cheaper","cheapest"],["kind","kinder","kindest"],["strong","stronger","strongest"],["warm","warmer","warmest"]];
+const SB=["My bag","Our house","The red car","Tom’s dog","That tree","Her book","This box","The river","My brother","The cake","Our class","The soup","My phone","The road","That hill","His bike","The park","Her room","The tower","The bridge"],OB=["yours","his","hers","theirs","mine","that one","the old one","the new one","last year’s one","the other one"];
+const NS=["thing","animal","boy","girl","tree","house","bag","dog","bird","box","book","road"],PW=["world","school","town","class","zoo","country","city","family","park","shop"];
+const PN=[["Maria","she"],["Tom","he"],["My sister","she"],["My father","he"],["The dog","it"],["The cat","it"],["Maria and Tom","they"],["My parents","they"],["The girls","they"],["Grandma","she"],["My brother","he"],["The horse","it"],["Aunt Rita","she"],["Mr. Brown","he"],["The bird","it"],["The twins","they"],["The boys","they"],["My uncle","he"],["Our cow","it"],["The ladies","they"]];
+const P1=[["likes pizza","like pizza"],["lives nearby","live nearby"],["plays football","play football"],["is in my class","are in my class"],["walks to school","walk to school"],["reads books","read books"],["sings well","sing well"],["works hard","work hard"],["has a bike","have a bike"],["drinks water","drink water"],["loves music","love music"],["draws pictures","draw pictures"],["cooks dinner","cook dinner"],["swims fast","swim fast"],["helps at home","help at home"],["smiles a lot","smile a lot"],["is very kind","are very kind"],["jumps high","jump high"],["dances well","dance well"],["learns quickly","learn quickly"]],VO=["saw","called","helped","thanked","hugged","visited","followed","greeted","met","invited"];
+const MO=["January","February","March","April","May","June","July","August","September","October","November","December"],DY=["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"],CK=["3 o’clock","5 o’clock","6:30","noon","midnight","7 o’clock","8:15","4 o’clock"],SE=["summer","winter","spring","autumn"];
+const TMS=[...MO.map(x=>[x,"in","months"]),...DY.map(x=>[x,"on","days"]),...CK.map(x=>[x,"at","clock times"]),...SE.map(x=>[x,"in","seasons"])];
+const EV=["The party","School","The movie","Our lesson","The game","The bus","The concert","The holiday","The picnic","The class","The show","Dinner","The meeting","The match","The trip","The test","The parade","The race","The fair","The festival","The cooking class","The play"],VX=["starts","ends","begins","opens","closes","finishes","happens","is held","will start","will end"];
+const PLC=[...["the box","the bag","the room","the garden","the kitchen","the house","the drawer","the bottle","the basket","the jar"].map(x=>[x,"in"]),...["the table","the floor","the wall","the shelf","the roof","the desk","the bed","the chair","the sofa","the fence","the mat","the stage"].map(x=>[x,"on"]),...["the door","the bus stop","the gate","the station"].map(x=>[x,"at"])];
+const SB2=["The cat","My book","The ball","The keys","Mom","The bird","Our teacher","The toy","The cup","The picture","The boy","My shoes","The fish","The pen","The lamp"],VF=["is","was","sits","stays","waits","rests","lies","stands"];
+const C=[
+ [()=>{const a=pick(AD),n=pick(NB),v=pick(VD);return Q(`Which word is the noun in “The ${a} ${n} ${v} quietly.”?`,n,[a,v],`${cap(n)} names a person or an animal, so it is the noun.`)},
+  ()=>{const[a,b]=shuf(NB).slice(0,2),d=pick(AD.concat(VD));return Q("Which word is NOT a noun?",d,[a,b],`${cap(d)} ${AD.includes(d)?"describes things":"is an action word"}, so it is not a noun.`)}],
+ [()=>{const[b,p]=pick(VP2),t=pick(TP),s=pick(SJ);return Q(`${t}, ${s} ___ (${b}).`,p,[b,"will "+b],`${t} means it already happened, so we say ${p}.`)},
+  ()=>{const[b,p]=pick(VP2),t=pick(TF),s=pick(SJ);return Q(`${t}, ${s} ___ (${b}).`,"will "+b,[p,b],`${t} hasn’t happened yet, so we say will ${b}.`)},
+  ()=>{const sg=Math.random()<.5,s=pick(sg?SG2:PL3),b=pick(V4),a=sg?b+"s":b;return Q(`${s} ___ ${pick(WH)}.`,a,dis(a,[b,b+"s",b+"ing"]),sg?`One person or animal: add s, so ${a}.`:`More than one: no s, so ${a}.`)}],
+ [()=>{const a=pick(AD),n=pick(NB),v=pick(VD);return Q(`Which word describes the noun in “The ${a} ${n} ${v}.”?`,a,[n,v],`${cap(a)} tells us what the ${n} is like.`)},
+  ()=>{const[b,c,s]=pick(CP2);return Q(`${pick(SB)} is ___ than ${pick(OB)}.`,c,dis(c,[b,"more "+b,s]),`Comparing two things: add er, so ${c}.`)},
+  ()=>{const[b,c,s]=pick(CP2);return Q(`That is the ___ ${pick(NS)} in the ${pick(PW)}!`,s,dis(s,[b,c,"most "+b]),`The most of all: add est, so ${s}.`)}],
+ [()=>{const[n,p]=pick(PN),pl=p==="they",a=pick(P1),b=pick(P1);return Q(`${n} ${a[+pl]}. ___ ${b[+pl]}.`,cap(p),dis(p,["he","she","it","they"]).map(cap),`We use “${p}” for ${n}.`)},
+  ()=>{const[n,p]=pick(PN),pl=p==="they",a=pick(P1),v=pick(VO),o=OBJ[p];return Q(`${n} ${a[+pl]}. We ${v} ___ yesterday.`,o,dis(o,["him","her","it","them","he","she"]),`After “${v}” we use ${o}.`)}],
+ [()=>{const[tm,pp,kd]=pick(TMS);return Q(`${pick(EV)} ${pick(VX)} ___ ${tm}.`,pp,dis(pp,["in","on","at"]),`Use “${pp}” with ${kd}.`)},
+  ()=>{const[pl,pp]=pick(PLC);return Q(`${pick(SB2)} ${pick(VF)} ___ ${pl}.`,pp,dis(pp,["with","of","about","like"]),`“${cap(pp)} ${pl}” is the way we say it.`)}]
+];
+const L=a=>a.length;
+const CN=[L(NB)*L(AD)*L(VD)+L(NB)*(L(NB)-1)/2*(L(AD)+L(VD)),L(VP2)*L(TP)*L(SJ)+L(VP2)*L(TF)*L(SJ)+(L(SG2)+L(PL3))*L(V4)*L(WH),L(AD)*L(NB)*L(VD)+L(SB)*L(CP2)*L(OB)+L(CP2)*L(NS)*L(PW),L(PN)*L(P1)*L(P1)+L(PN)*L(P1)*L(VO),L(EV)*L(VX)*L(TMS)+L(SB2)*L(VF)*L(PLC)];
+/* ---------- certificate ---------- */
+async function certificate(){
+  const t=S.r.reduce((a,b)=>a+b,0);if(!t){toast("Play a round first!");return;}
+  const L=S.r.map((_,i)=>lv(i)),bi=L.indexOf(Math.max(...L)),lvl=L[bi],date=new Date().toLocaleDateString(undefined,{year:"numeric",month:"long",day:"numeric"});
+  const svg=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 560" width="800" height="560"><style>text{font-family:'Trebuchet MS','Comic Sans MS',sans-serif;text-anchor:middle}</style><rect width="800" height="560" fill="#FFF6DC"/><rect x="20" y="20" width="760" height="520" rx="24" fill="none" stroke="#2F8CFF" stroke-width="8"/><rect x="40" y="40" width="720" height="480" rx="16" fill="none" stroke="#FFC933" stroke-width="4" stroke-dasharray="14 8"/><text x="400" y="120" font-size="64">🦉</text><text x="400" y="185" font-size="44" font-weight="800" fill="#23305A">Detective Owl Certificate</text><text x="400" y="240" font-size="24" fill="#5D6890">This certificate proudly goes to</text><text x="400" y="310" font-size="54" font-weight="800" fill="#E8590C">${esc(S.name)}</text><text x="400" y="365" font-size="26" fill="#23305A">for reaching Level ${lvl}: ${LT[Math.min(lvl-1,9)]}</text><text x="400" y="400" font-size="26" fill="#23305A">in ${POS[bi].k}</text><text x="400" y="452" font-size="22" fill="#5D6890">${t} rounds completed · ${S.stars} stars · ${date}</text><text x="400" y="495" font-size="26" font-weight="700" fill="#1E9E58">Great detective work!</text></svg>`;
+  try{const dl=typeof claude==="undefined"?null:await claude.use("downloads");if(!dl){toast("Saving isn’t available here");return;}await dl.save({filename:"Detective-Owl-"+S.name.replace(/[^\w-]+/g,"_")+".svg",data:new Blob([svg],{type:"image/svg+xml"})});}catch(e){if(!e||e.code!=="declined")toast("Couldn’t save it");}
+}
+/* ---------- monthly XP + weekly XP + leaderboard + teacher ---------- */
+let DB=null,UID=null,CAN=false,TEACH=false,fails=0,lockT=0;
+(async()=>{try{if(typeof claude==="undefined")return;DB=await claude.use("db");const u=await claude.use("user");if(DB&&u){UID=await u.id();CAN=!!UID&&u.can("data.write")!==false;}}catch(e){}})();
+const cm=()=>{const d=new Date();return "m"+d.getFullYear()+String(d.getMonth()+1).padStart(2,"0");};
+const wkk=()=>{const d=new Date(),m=new Date(d.getFullYear(),d.getMonth(),d.getDate()-((d.getDay()+6)%7));return "w"+m.getFullYear()+String(m.getMonth()+1).padStart(2,"0")+String(m.getDate()).padStart(2,"0");};
+function rollMonth(){if(S.mk!==cm()||typeof S.mx!=="number"){S.mk=cm();S.mx=0;}if(S.wk!==wkk()||typeof S.wx!=="number"){S.wk=wkk();S.wx=0;}if(!Array.isArray(S.ac)||S.ac.length!==5)S.ac=[[0,0],[0,0],[0,0],[0,0],[0,0]];}
+const jget=(k,d)=>{try{return JSON.parse(localStorage.getItem(k))||d;}catch(e){return d;}},jset=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}};
+function record(earn){rollMonth();S.mx+=earn*10;S.wx+=earn*10;S.ac[P][0]+=good;S.ac[P][1]+=qs.length;S.pt=Date.now();
+  const b=jget("owlboard2",[]);let e=b.find(x=>x.n.toLowerCase()===S.name.toLowerCase());if(!e){e={n:S.name,mk:"",xp:0,wk:"",wx:0};b.push(e);}
+  e.xp=e.mk===S.mk?Math.max(e.xp,S.mx):S.mx;e.mk=S.mk;e.wx=e.wk===S.wk?Math.max(e.wx,S.wx):S.wx;e.wk=S.wk;jset("owlboard2",b);
+  const h=jget("owlhall",{});if(!h[S.mk]||h[S.mk].xp<e.xp)h[S.mk]={n:S.name,xp:e.xp};jset("owlhall",h);
+  const pr=jget("owlprog",{});pr[S.name.toLowerCase()]={n:S.name,r:S.r,st:S.stars,mk:S.mk,mx:S.mx,ac:S.ac,t:S.pt};jset("owlprog",pr);
+  pushScore();}
+async function pushScore(){if(!DB||!UID||!CAN)return;try{
+  const ref=DB.doc("lb/"+UID),s=await ref.get(),o=s.exists?s.data():{};let xp=S.mx,wx=S.wx;if(o.mk===S.mk)xp=Math.max(xp,o.xp||0);if(o.wk===S.wk)wx=Math.max(wx,o.wx||0);
+  if(o.mk!==S.mk||o.xp!==xp||o.wk!==S.wk||o.wx!==wx||o.n!==S.name)await ref.set({n:S.name,mk:S.mk,xp,wk:S.wk,wx,u:UID});
+  await DB.doc("prog/"+UID).set({n:S.name,r:S.r,st:S.stars,mk:S.mk,mx:S.mx,ac:S.ac,t:S.pt||Date.now(),u:UID});
+}catch(e){if(e&&e.code==="invalid_argument")CAN=false;}}
+function board(mode){
+  mode=mode==="w"?"w":"m";scr="board";rollMonth();const M=mode==="m",key=M?S.mk:S.wk,kf=M?"mk":"wk",xf=M?"xp":"wx",dt=new Date(),me=S.name.toLowerCase(),
+  days=M?new Date(dt.getFullYear(),dt.getMonth()+1,0).getDate()-dt.getDate()+1:7-((dt.getDay()+6)%7);
+  const loc=jget("owlboard2",[]).filter(e=>e[kf]===key).sort((a,b)=>b[xf]-a[xf]).slice(0,10);
+  const rows=(l,isMe)=>l.length?`<ol style="padding-left:1.4em;margin:6px 0">`+l.map((e,i)=>`<li style="font-size:1.15rem;margin:3px 0">${["🥇","🥈","🥉"][i]||""} <b>${esc(e.n)}</b>${isMe(e)?" (you)":""} · ${e[xf]} XP</li>`).join("")+"</ol>":`<p class="ask">No scores yet. Finish a round to join!</p>`;
+  const hall=Object.entries(jget("owlhall",{})).filter(x=>x[0]!==cm()).sort((a,b)=>b[0].localeCompare(a[0])).slice(0,6);
+  const lab=k=>new Date(+k.slice(1,5),+k.slice(5,7)-1,1).toLocaleDateString(undefined,{month:"long",year:"numeric"});
+  stage.innerHTML=`<h2>🏆 Leaderboard</h2><div class="row"><button class="btn ${M?"go":"opt"}" id="tm">Month</button><button class="btn ${M?"opt":"go"}" id="tw">Week</button></div><p class="ask" style="margin-top:8px">${M?"Monthly":"Weekly"} XP resets in ${days} day${days>1?"s":""}. Levels and stars are kept. Your XP: <b>${M?S.mx:S.wx}</b>.</p><h3>Everyone (shared)</h3><div id="sh"><p class="ask">Loading…</p></div><h3>On this device</h3>${rows(loc,e=>e.n.toLowerCase()===me)}${M&&hall.length?`<h3>🏅 Hall of champions</h3>`+hall.map(([k,v])=>`<div class="it"><span>${lab(k)}</span><b>${esc(v.n)} · ${v.xp} XP</b></div>`).join(""):""}<div class="row" style="margin-top:12px"><button class="btn opt" id="bk">Back</button></div>`;
+  on("tm",()=>board("m"));on("tw",()=>board("w"));on("bk",()=>go(home));
+  (async()=>{let h;if(!DB||!UID){h=`<p class="ask">The shared board needs a signed-in account with permission to play along. Showing this device only.</p>`;}else{try{await pushScore();const s=await DB.collection("lb").orderBy(xf,"desc").limit(100).get();h=rows(s.docs.map(d=>d.data()).filter(e=>e[kf]===key).slice(0,10),e=>e.u===UID);}catch(e){h=`<p class="ask">Couldn’t load the shared board.</p>`;}}
+   if(scr==="board"&&$("sh"))$("sh").innerHTML=h;})();
+}
+const sha=async s=>[...new Uint8Array(await crypto.subtle.digest("SHA-256",new TextEncoder().encode(s)))].map(b=>b.toString(16).padStart(2,"0")).join("");
+const TH="15732085b594c121afad2c2f0280db0be34e58282b5e752d400947ba40c1e763";
+function teacherLogin(){
+  scr="tlogin";stage.innerHTML=`<h2>👩‍🏫 Teacher login</h2><p class="ask">Teachers only.</p><label for="tu"><b>Username</b></label><input id="tu" autocomplete="off"><label for="tp"><b>Password</b></label><input id="tp" type="password" autocomplete="off"><div class="row"><button class="btn go" id="ti">Sign in</button><button class="btn opt" id="tb">Back</button></div><div class="say"><span class="owl">🦉</span><p id="msg">Enter your teacher details.</p></div>`;
+  on("tb",()=>go(S?home:nameScreen));
+  on("ti",async()=>{if(Date.now()<lockT){say("Too many tries. Wait a little and try again.");return;}
+    let ok=false;try{ok=(await sha("owl-teacher-v1|"+$("tu").value+"|"+$("tp").value))===TH;}catch(e){say("Sign in isn’t available in this browser.");return;}
+    if(ok){TEACH=true;fails=0;go(teacher);}else{fails++;if(fails>=5){lockT=Date.now()+30000;fails=0;}shake($("tp"));say("That username or password isn’t right.");}});
+}
+const gradeOf=a=>a>=.9?"A":a>=.8?"B":a>=.7?"C":a>=.6?"D":"E";
+async function teacher(){
+  if(!TEACH){teacherLogin();return;}scr="teacher";
+  stage.innerHTML=`<h2>👩‍🏫 Teacher view</h2><p class="ask">Loading class data…</p>`;
+  const local=Object.values(jget("owlprog",{}));let shared=[],note="";
+  if(DB&&UID){try{const s=await DB.collection("prog").orderBy("t","desc").limit(200).get();shared=s.docs.map(d=>d.data());}catch(e){note="Couldn’t read shared class data.";}}else note="Shared class data needs a signed-in Editor or Owner account. Showing this device only.";
+  const seen={};shared.concat(local).forEach(r=>{const k=(r.n||"").toLowerCase();if(k&&(!seen[k]||(r.t||0)>(seen[k].t||0)))seen[k]=r;});
+  const R=Object.values(seen).map(r=>{const ac=r.ac||[],c=ac.reduce((a,x)=>a+x[0],0),t=ac.reduce((a,x)=>a+x[1],0),pct=t?c/t:0;return{...r,pct,t,g:t?gradeOf(pct):"–",weak:ac.map((x,i)=>[i,x[1]>=20?x[0]/x[1]:1]).filter(x=>x[1]<.6).map(x=>POS[x[0]].k),lv:(r.r||[0,0,0,0,0]).map(n=>Math.floor(n/2)+1)};}).sort((a,b)=>a.n.localeCompare(b.n));
+  if(scr!=="teacher")return;
+  const avg=R.length?Math.round(R.reduce((a,r)=>a+r.pct,0)/R.length*100):0,td="padding:6px 8px;border-bottom:2px dashed var(--line)",ls=r=>r.t?new Date(r.pt||r.t).toLocaleDateString():"–";
+  stage.innerHTML=`<h2>👩‍🏫 Teacher view</h2><p class="ask">${R.length} student${R.length===1?"":"s"} · class accuracy ${avg}%. Grades: A 90+, B 80+, C 70+, D 60+, E below 60 (accuracy = right on the first try).</p>${note?`<p class="ask"><b>${note}</b></p>`:""}<div style="overflow-x:auto"><table style="border-collapse:collapse;width:100%;font-size:1rem"><thead><tr>${["Student","Grade","Accuracy","Levels N·V·Aj·Pr·Pp","⭐","Month XP","Last played","Needs help"].map(h=>`<th style="text-align:left;padding:6px 8px;border-bottom:3px solid var(--line);white-space:nowrap">${h}</th>`).join("")}</tr></thead><tbody>${R.map(r=>`<tr><td style="${td}"><b>${esc(r.n)}</b></td><td style="${td}"><b>${r.g}</b></td><td style="${td}">${r.t?Math.round(r.pct*100)+"%":"–"}</td><td style="${td};white-space:nowrap">${r.lv.join("·")}</td><td style="${td}">${r.st||0}</td><td style="${td}">${r.mk===cm()?r.mx:0}</td><td style="${td};white-space:nowrap">${r.t?new Date(r.t).toLocaleDateString():"–"}</td><td style="${td}">${r.weak.length?esc(r.weak.join(", ")):"–"}</td></tr>`).join("")||`<tr><td style="${td}" colspan="8">No students yet.</td></tr>`}</tbody></table></div><h3>📌 Assign a topic to students</h3><div class="row">${POS.map((p,i)=>`<button class="btn opt" data-as="${i}" style="font-size:1rem;padding:5px 14px">${p.e} ${p.k}</button>`).join("")}<button class="btn opt" data-as="-1" style="font-size:1rem;padding:5px 14px">None</button></div><p class="ask" id="asn" role="status">Students get +2 bonus ⭐ for rounds in the assigned topic.</p><div class="row" style="margin-top:12px"><button class="btn" id="rf">Refresh</button><button class="btn opt" id="dc">Download CSV</button><button class="btn no" id="so">Sign out</button></div>`;
+  stage.querySelectorAll("[data-as]").forEach(b=>b.onclick=async()=>{const p=+b.dataset.as;jset("owlassign",{p});let ok="Saved on this device.";if(DB&&UID){try{await DB.doc("assign/current").set({p,t:Date.now()});ok="Assigned for everyone!";}catch(e){ok="Saved on this device only (shared saving needs Editor access).";}}ASG=p>=0?{p}:null;$("asn").textContent=ok+(p>=0?" Topic: "+POS[p].k:" Assignment cleared.");sfx("good");});
+  on("rf",()=>teacher());on("so",()=>{TEACH=false;go(S?home:nameScreen);});
+  on("dc",async()=>{const q=v=>'"'+String(v).replace(/"/g,'""')+'"',rows=[["Student","Grade","Accuracy %","Nouns lvl","Verbs lvl","Adjectives lvl","Pronouns lvl","Prepositions lvl","Stars","Month XP","Last played","Needs help"],...R.map(r=>[r.n,r.g,Math.round(r.pct*100),...r.lv,r.st||0,r.mk===cm()?r.mx:0,r.t?new Date(r.t).toLocaleDateString():"",r.weak.join("; ")])].map(a=>a.map(q).join(",")).join("\n");
+    try{const dl=typeof claude==="undefined"?null:await claude.use("downloads");if(!dl){toast("Saving isn’t available here");return;}await dl.save({filename:"detective-owl-class.csv",data:new Blob([rows],{type:"text/csv"})});}catch(e){if(!e||e.code!=="declined")toast("Couldn’t save it");}});
+}
+/* ---------- even more questions ---------- */
+const C2n=n=>n*(n-1)/2;
+const PRP=["Maria","Tom","Georgetown","Guyana","Demerara","Brazil","Africa","Mr. Brown","Aunt Rita","Kaieteur Falls","Linden","Essequibo","Jamaica","Trinidad","the Caribbean","the Amazon"];
+const CT=[["market","school","park","beach","library","hospital","zoo","farm","kitchen","church","shop","garden","airport","bakery","bridge","island","forest","river","village","station"],["teacher","farmer","doctor","sailor","nurse","pilot","chef","singer","king","baker","driver","artist"],["dog","cat","horse","duck","rabbit","fox","monkey","bird","cow","goat","tiger","frog"],["table","book","pencil","bag","cup","chair","ball","kite","door","clock","lamp","spoon","hat","drum","box","key"]],LB=["place","person","animal","thing"];
+const BC=["happy","in the garden","very tired","ready","at home","in my class","late for school","hungry","so excited","very kind","at the park","here","outside","upstairs"];
+const BP=[["I","was"],["he","was"],["she","was"],["it","was"],["we","were"],["they","were"],["you","were"],["the boys","were"],["the girl","was"],["my friends","were"]];
+const HV=[["I","have"],["She","has"],["He","has"],["We","have"],["They","have"],["The dog","has"],["The boys","have"],["My mother","has"],["You","have"],["Maria","has"]],HO=["a red bike","two sisters","a new book","a big dog","some apples","a toy car","a blue hat","three pencils","a sweet cake","a small bag","a kite","two cats","a pink ball","a loud drum","a nice garden","a warm coat","a long rope","a green frog","a tall tree","a funny story"],WH2=["now","today","this week","these days","right now","at the moment","this year","this month","for now","already"];
+const PLS=["at the zoo","in the park","on the farm","near the river","at school","in the garden","by the road","at the market","on the hill","at the beach"];
+const OP2=[["hot","cold"],["big","small"],["happy","sad"],["fast","slow"],["old","new"],["tall","short"],["hard","soft"],["light","dark"],["loud","quiet"],["clean","dirty"],["full","empty"],["strong","weak"],["rich","poor"],["wet","dry"],["thick","thin"],["early","late"],["open","closed"],["near","far"]];
+const AJV=["old","ugly","orange","amazing","honest","happy","tall","brave","clever","tiny","loud","shiny","kind","sunny","easy","empty","angry","quiet","hungry","proud"];
+const PO=[["me","mine"],["you","yours"],["Tom","his"],["Maria","hers"],["my sister and me","ours"],["Tom and Maria","theirs"],["my father","his"],["my mother","hers"],["the twins","theirs"],["Aunt Rita","hers"],["Mr. Brown","his"],["you and me","ours"]],TGS=["bag","book","bike","hat","cup","ball","kite","pencil","coat","box","toy","phone","ruler","drum","shoe","scarf","watch","umbrella","bottle","lunchbox"];
+const NM=["Tom","Maria","Aunt Rita","my brother","my sister","Mr. Brown","Grandma","Nina","my cousin","Kofi","Anna","Sam","Priya","Leo","Mia","Dad","Mom","my friend","Ravi","our neighbor"],PLC2=["the park","the shop","school","the beach","the market","the zoo","the library","the farm","the river","the game","the party","church","the cinema","the museum","the pool"],BK=["a book","a gift","a ball","a hat","a card","a cake","a toy","some apples","a letter","a kite","a pencil","some candy","a photo","a ticket","a drink"];
+const PRO=["he","she","it","they","we","I","you","him","her","them","us","me","his","hers","ours","theirs","mine","yours","its","their"],PREP=["in","on","at","under","over","behind","between","near","beside","across","through","into","above","below","inside","outside"];
+const OTH=NB.concat(AD,VD);
+const C2=[
+ [()=>{const a=pick(PRP);return Q("Which word is a proper noun (a special name)?",a,shuf(NB).slice(0,2),`${a} is the special name of one person or place, so it is a proper noun.`)},
+  ()=>{const i=Math.random()*10|0,[s,p]=PL[i],o=shuf(PL.filter((_,j)=>j!==i)).slice(0,2).map(x=>x[0]);return Q("Which word means MORE THAN ONE?",p,o,`${cap(p)} is the plural of ${s}.`)},
+  ()=>{const i=Math.random()*4|0,o=shuf([0,1,2,3].filter(x=>x!==i)).slice(0,2),a=pick(CT[i]);return Q(`Which noun names a ${LB[i]}?`,a,o.map(j=>pick(CT[j])),`${cap(a)} is a ${LB[i]}.`)}],
+ [()=>{const a=pick(AD),n=pick(NB),v=pick(VD);return Q(`Which word is the verb in “The ${a} ${n} ${v} quietly.”?`,v,[a,n],`${cap(v)} tells what the ${n} did, so it is the verb.`)},
+  ()=>{const[s,v]=pick(BP),t=pick(TP);return Q(`${t}, ${s} ___ ${pick(BC)}.`,v,dis(v,["was","were","is","are"]),`${cap(s)} goes with ${v} in the past.`)},
+  ()=>{const[s,v]=pick(HV);return Q(`${s} ___ ${pick(HO)} ${pick(WH2)}.`,v,dis(v,["have","has","having"]),`${s} goes with ${v}.`)},
+  ()=>{const[s,v]=pick(SV);return Q(`${s} ___ ${pick(BC)} today.`,v,dis(v,["am","is","are"]),`${s} goes with ${v}.`)}],
+ [()=>{const a=pick(AD),n=pick(NB);return Q(`Which word describes the noun in “We saw a ${a} ${n} ${pick(PLS)}.”?`,a,[n,"saw"],`${cap(a)} tells what the ${n} is like.`)},
+  ()=>{let[a,b]=pick(OP2);if(Math.random()<.5)[a,b]=[b,a];return Q(`The opposite of “${a}” is ___.`,b,shuf(OP2.flat().filter(x=>x!==a&&x!==b)).slice(0,2),`${cap(a)} and ${b} mean the opposite of each other.`)},
+  ()=>{const a=pick(AJV),n=pick(NB),r=/^([aeiou]|honest)/.test(a)?"an":"a";return Q(`I saw ___ ${a} ${n}.`,r,[r==="an"?"a":"an","many"],`Say “an” before a vowel sound and “a” before other sounds, so ${r} ${a}.`)}],
+ [()=>{const[n,a]=pick(PO),t=pick(TGS),f=Math.random()*3|0;return Q([`This ${t} belongs to ${n}. It is ___.`,`Look at that ${t}! It belongs to ${n}. The ${t} is ___.`,`Whose ${t} is this? It belongs to ${n}. It is ___.`][f],a,dis(a,["mine","yours","his","hers","ours","theirs"]),`Something that belongs to ${n} is ${a}.`)},
+  ()=>{const n=pick(NM);return Math.random()<.5?Q(`${n} and ___ went to ${pick(PLC2)}.`,"I",["me","myself","mine"].slice(0,2),`We say “${n} and I” when we are doing the action.`):Q(`The teacher gave ${n} and ___ ${pick(BK)}.`,"me",["I","myself","mine"].slice(0,2),`After “gave” we say “me”.`)},
+  ()=>{const a=pick(PRO),o=shuf(OTH).slice(0,2);return Q("Which word is a pronoun?",a,o,`${cap(a)} takes the place of a noun, so it is a pronoun.`)}],
+ [()=>{const a=pick(PREP),o=shuf(OTH).slice(0,2);return Q("Which word is a preposition?",a,o,`“${cap(a)}” shows where something is, so it is a preposition.`)}]
+];
+const EX=[L(PRP)*C2n(L(NB))+L(PL)*C2n(L(PL)-1)+CT.reduce((t,c,i)=>t+L(c)*[0,1,2,3].filter(x=>x!==i).reduce((s,j,_,a)=>s+a.filter(k=>k>j).reduce((u,k)=>u+L(CT[j])*L(CT[k]),0),0),0),L(AD)*L(NB)*L(VD)+L(BP)*L(TP)*L(BC)+L(HV)*L(HO)*L(WH2)+L(SV)*L(BC),L(AD)*L(NB)*L(PLS)+2*L(OP2)*C2n(2*L(OP2)-2)+L(AJV)*L(NB),3*L(PO)*L(TGS)+L(NM)*(L(PLC2)+L(BK))+L(PRO)*C2n(L(OTH)),L(PREP)*C2n(L(OTH))];
+CN.forEach((_,i)=>CN[i]+=EX[i]);
+/* ---------- extra features ---------- */
+let MODE=0,curQ=null;
+const day=()=>new Date().toDateString();
+function streak(){const st=jget("owlday:"+S.name.toLowerCase()+"s",null);return st&&st.n>=2&&(st.d===day()||st.d===new Date(Date.now()-864e5).toDateString())?` 🔥 ${st.n}-day streak!`:"";}
+function logMiss(q){const m=jget("owlmiss",[]).filter(x=>x.t!==q.t);m.unshift({t:q.t,a:q.a,o:q.o,w:q.w});jset("owlmiss",m.slice(0,20));}
+function clearMiss(q){jset("owlmiss",jget("owlmiss",[]).filter(x=>x.t!==q.t));}
+function speak(q){try{const u=new SpeechSynthesisUtterance(q.t.replace(/___/g,"blank")+". "+q.o.join(". "));u.rate=.9;speechSynthesis.cancel();speechSynthesis.speak(u);}catch(e){toast("Reading aloud isn’t available");}}
+stage.addEventListener("click",e=>{if(e.target.closest("#rd")&&curQ)speak(curQ);});
+function dailyStart(){MODE=1;scr="round";qs=[];for(let i=0;i<5;i++){const p=Math.random()*5|0;qs.push(pick(G[p].slice(0,2).concat(C[p],C2[p]))());}qi=0;good=0;showQ();}
+function dailyDone(){scr="result";const earn=good*2+(good===5?5:0);S.stars+=earn;jset("owlchal:"+S.name.toLowerCase(),day());save();hold=true;stopMusic();sfx("win");if(good===5)confetti();
+  stage.innerHTML=`<h2>Daily challenge done! 🎯</h2><p class="ask">${good} of 5 right the first time. You earned ⭐ ${earn}${good===5?" (includes a +5 perfect bonus)":""}. Come back tomorrow for a new one!</p><div class="row"><button class="btn go" id="hm">Home</button></div>`;refresh();on("hm",()=>{hold=false;go(home);});}
+function notebookStart(){const m=jget("owlmiss",[]);if(!m.length){home();return;}MODE=2;scr="round";qs=shuf(m).slice(0,10).map(q=>({...q,o:shuf(q.o)}));qi=0;good=0;showQ();}
+function notebookDone(){scr="result";S.stars+=good;save();stage.innerHTML=`<h2>Notebook practice done! 📓</h2><p class="ask">You fixed ${good} of ${qs.length} mistakes and earned ⭐ ${good}. Any you missed again stay in your notebook.</p><div class="row"><button class="btn go" id="hm">Home</button></div>`;refresh();on("hm",()=>go(home));}
+/* ---------- challenges, settings, practice sheet ---------- */
+const dfv=()=>S&&S.df!==undefined?S.df:1;
+function speakText(t){try{const u=new SpeechSynthesisUtterance(t);u.rate=.9;speechSynthesis.cancel();speechSynthesis.speak(u);}catch(e){}}
+function mixed(n){const l=[];for(let i=0;i<n;i++){const p=Math.random()*5|0;l.push(pick(G[p].slice(0,2).concat(C[p],C2[p]))());}return l;}
+function weeklyStart(){MODE=3;scr="round";qs=mixed(10);qi=0;good=0;showQ();}
+function weeklyDone(){scr="result";const earn=good*3+(good>=9?10:0);S.stars+=earn;jset("owlweek:"+S.name.toLowerCase(),wkk());save();hold=true;stopMusic();sfx("win");if(good>=9)confetti();
+  stage.innerHTML=`<h2>Weekly challenge done! 🏅</h2><p class="ask">${good} of 10 right the first time. You earned ⭐ ${earn}${good>=9?" (includes a +10 bonus for 9 or more)":""}. A new challenge starts on Monday!</p><div class="row"><button class="btn go" id="hm">Home</button></div>`;refresh();on("hm",()=>{hold=false;go(home);});}
+async function sheet(){
+  const list=shuf(jget("owlmiss",[])).slice(0,10).map(q=>({...q}));while(list.length<10)list.push(mixed(1)[0]);
+  let t=`DETECTIVE OWL PRACTICE SHEET\nName: ${S.name}     Date: ${new Date().toLocaleDateString()}\n\nCircle the best answer.\n\n`;
+  list.forEach((q,i)=>{t+=`${i+1}) ${q.t}\n    `+q.o.map((o,j)=>`${"abc"[j]}. ${o}`).join("     ")+"\n\n";});
+  t+="\n--- ANSWER KEY ---\n"+list.map((q,i)=>`${i+1}) ${"abc"[q.o.indexOf(q.a)]}. ${q.a}  (${q.w})`).join("\n")+"\n";
+  try{const dl=typeof claude==="undefined"?null:await claude.use("downloads");if(!dl){toast("Saving isn’t available here");return;}await dl.save({filename:"Practice-sheet-"+S.name.replace(/[^\w-]+/g,"_")+".txt",data:new Blob([t],{type:"text/plain"})});}catch(e){if(!e||e.code!=="declined")toast("Couldn’t save it");}
+}
+/* ---------- assignments + round length ---------- */
+let ASG=null;
+const rlv=()=>S&&S.rl?S.rl:10;
+async function loadAssign(){let a=null;if(DB&&UID){try{const d=await DB.doc("assign/current").get();if(d.exists)a=d.data();}catch(e){}}if(!a)a=jget("owlassign",null);ASG=a&&a.p>=0&&a.p<5?a:null;}
+async function showAsg(){await loadAssign();if(scr!=="home"||!$("asg")||!ASG)return;$("asg").innerHTML=`<div class="pc" style="margin:8px 0"><b>📌 Assignment from your teacher</b><span>Practice <b>${POS[ASG.p].k}</b>. Rounds in this topic earn +2 bonus ⭐!</span><button class="btn go" id="ap">Play ${POS[ASG.p].k}</button></div>`;on("ap",()=>{P=ASG.p;go(startRound);});}
+/* ---------- menu, save, exit ---------- */
+function showCode(){if(!S)return;save();const c=mkCode();modal(`<h2>💾 Progress saved</h2><p class="ask">Your code for <b>${esc(S.name)}</b>. Keep it safe! You need your name and this code to come back from any device.</p><div class="code">${c}</div><div class="row"><button class="btn go" id="m1">Copy code</button><button class="btn opt" id="m2">Close</button></div>`);on("m1",()=>copy(c));on("m2",closeModal);}
+function confirmExit(){modal(`<h2>Save and exit?</h2><p class="ask">${scr==="round"?"Your current round will be lost, but your stars and levels are kept.":"Your stars and levels will be saved."}</p><div class="row"><button class="btn no" id="y">Yes, save and exit</button><button class="btn go" id="n">No, keep playing</button></div>`);
+  on("y",()=>{clearInterval(gameT);hold=false;save();closeModal();showCode();go(()=>{S=null;nameScreen();});});on("n",()=>{closeModal();});}
+$("shp").onclick=()=>{sfx("tap");if(!S)return;if(scr==="round"){toast("Finish the round first!");return;}clearInterval(gameT);closeModal();go(shop);};
+$("menu").onclick=()=>{sfx("tap");if(!S)return;
+  modal(`<h2>Menu</h2><div class="row" style="flex-direction:column"><button class="btn go" id="a1">Resume</button><button class="btn" id="a2">🏠 Home</button><button class="btn" id="a3">💾 Save progress</button><button class="btn" id="a8">⏱️ Round length: ${rlv()}</button><button class="btn" id="a5">🎚️ Difficulty: ${["Easy","Normal","Hard"][dfv()]}</button><button class="btn" id="a7">🗣️ Auto-read: ${S.ra?"On":"Off"}</button><button class="btn" id="a6">🖨️ Practice sheet</button><button class="btn no" id="a4">Exit game</button></div>`);
+  on("a1",closeModal);on("a8",()=>{S.rl={5:10,10:15,15:5}[rlv()];save();closeModal();toast("Round length: "+S.rl+" questions");});on("a5",()=>{S.df=(dfv()+1)%3;save();closeModal();toast("Difficulty: "+["Easy","Normal","Hard"][S.df]);});on("a7",()=>{S.ra=!S.ra;save();closeModal();toast("Auto-read "+(S.ra?"on":"off"));});on("a6",()=>{closeModal();sheet();});on("a2",()=>{clearInterval(gameT);closeModal();hold=false;go(home);});on("a3",()=>{closeModal();showCode();});on("a4",()=>{closeModal();confirmExit();});};
+document.addEventListener("keydown",e=>{if(e.key==="Escape")closeModal();});
+const SWT={sunny:"🟡",ocean:"🔵",space:"🟣",candy:"🩷",jungle:"🟢",sunset:"🟠"};
+const TIPS=["Tip: perfect rounds earn bonus stars!","Tip: save your code to come back later.","Tip: unlock new themes in the shop.","Tip: play every day for a streak bonus.","Tip: read the owl’s explanations!"];
+let lp=0;const liv=setInterval(()=>{lp=Math.min(100,lp+Math.random()*14+6);$("lbar").style.width=lp+"%";$("ltip").textContent=lp>=100?"Ready!":TIPS[Math.floor(lp/20)%TIPS.length];if(lp>=100){clearInterval(liv);$("lgo").classList.remove("hide");$("lgo").focus();}},220);
+$("lgo").onclick=()=>{sfx("good");$("splash").classList.add("gone");setTimeout(()=>$("splash").remove(),450);};
+nameScreen();refresh();
+</script>
+</body>
+</html>
